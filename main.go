@@ -37,7 +37,7 @@ func main() {
 		return
 	}
 
-	// testHasMany()
+	testHasMany()
 
-	testManyToMany()
+	// testManyToMany()
 }
