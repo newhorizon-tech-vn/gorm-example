@@ -14,7 +14,7 @@ type Item struct {
 }
 
 func (*Item) TableName() string {
-	return "Item"
+	return "item"
 }
 
 type Category struct {
@@ -25,7 +25,7 @@ type Category struct {
 }
 
 func (*Category) TableName() string {
-	return "Category"
+	return "category"
 }
 
 type Product struct {
@@ -47,7 +47,7 @@ type Product struct {
 }
 
 func (*Product) TableName() string {
-	return "Product"
+	return "product"
 }
 
 type Factory struct {
@@ -59,7 +59,7 @@ type Factory struct {
 }
 
 func (*Factory) TableName() string {
-	return "Factory"
+	return "factory"
 }
 
 type Workshop struct {
@@ -70,7 +70,7 @@ type Workshop struct {
 }
 
 func (*Workshop) TableName() string {
-	return "Workshop"
+	return "workshop"
 }
 
 type ProductFactory struct {
