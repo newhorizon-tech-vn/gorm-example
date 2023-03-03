@@ -36,6 +36,7 @@ func addCategoryWithFactoriesAndWorkshops() (int, error) {
 	})
 
 	err := DBClient.Transaction(func(tx *gorm.DB) error {
+
 		factories := []*Factory{factory5, factory6}
 		// generate factory 5 id
 		if err := tx.Session(&gorm.Session{FullSaveAssociations: true}).Create(factories).Error; err != nil {
