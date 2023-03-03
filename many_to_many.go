@@ -54,41 +54,56 @@ func addCategoryWithFactoriesAndWorkshops() (int, error) {
 	return category.ID, nil
 }
 
-func getAllProducts() ([]Product, error) {
+func selectAllProducts() ([]Product, error) {
 	var result []Product
 	err := DBClient.Preload("Factories").Find(&result).Error
 	return result, err
 }
 
-func getAllProductsAndFactoriesAndWorkshopsByFactoryID(factoryID int) ([]Product, error) {
+func selectAllProductsAndFactoriesAndWorkshopsByFactoryID(factoryID int) ([]Product, error) {
 	var result []Product
 	err := DBClient.Preload("Factories", "id = ?", factoryID).Preload("Factories.Workshops", "name LIKE ?", "%_1%").Find(&result).Error
 	return result, err
 }
 
-func getProductsAndFactoriesAndWorkshopsByFactoryID(productID, factoryID int) ([]Product, error) {
+func selectProductsAndFactoriesAndWorkshopsByFactoryID(productID, factoryID int) ([]Product, error) {
 	var result []Product
 	err := DBClient.Preload("Factories", "id = ?", factoryID).Preload("Factories.Workshops", "name LIKE ?", "%_1%").Where("id = ?", productID).Find(&result).Error
 	return result, err
 }
 
-func getProducts() ([]Product, error) {
+func selectProducts() ([]Product, error) {
 	var result []Product
 	err := DBClient.Preload("Items").Preload("Factories").Preload("Factories.Workshops").Find(&result).Error
 	return result, err
 }
 
-func getCategoryByID(id int) (Category, error) {
+func selectCategoryByID(id int) (Category, error) {
 	var result Category
 	err := DBClient.Preload("Products").Preload("Products.Items").Preload("Products.Factories").Preload("Products.Factories.Workshops").Where("id = ?", id).Find(&result).Error
 	return result, err
 }
 
+func selectCategoryByIDV2(id int) (Category, error) {
+	var result Category
+	err := DBClient.Preload("Products.Items").Preload("Products.Factories.Workshops").Where("id = ?", id).Find(&result).Error
+	return result, err
+}
+
 func testManyToMany() {
-	products, err := getProductsAndFactoriesAndWorkshopsByFactoryID(1, 2)
+	id, err := addCategoryWithFactoriesAndWorkshops()
 	if err != nil {
-		fmt.Println("ERROR", "Get all product failed", err)
+		fmt.Println("ERROR", "Add category", "error", err)
 		return
 	}
-	fmt.Println("DEBUG", "Get all product success", "products", products)
+	fmt.Println("INFO", "Add category success", "id", id)
+
+	// category, err := selectCategoryByID(id)
+	category, err := selectCategoryByIDV2(id)
+	if err != nil {
+		fmt.Println("ERROR", "Get product failed", "error", err)
+		return
+	}
+	DumpCategoryData(&category)
+	fmt.Println("INFO", "Get category success", "category", category)
 }

@@ -5,7 +5,7 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
+	// "gorm.io/gorm/logger"
 )
 
 func initDBClient() (*gorm.DB, error) {
@@ -17,7 +17,7 @@ func initDBClient() (*gorm.DB, error) {
 		username, password, addr, dbname)
 
 	client, err := gorm.Open(mysql.Open(connStr), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		// Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
 		return nil, err
@@ -37,19 +37,7 @@ func main() {
 		return
 	}
 
-	testHasMany()
+	// testHasMany()
 
-	id, err := addCategoryWithFactoriesAndWorkshops()
-	if err != nil {
-		fmt.Println("ERROR", "Add category", "error", err)
-		return
-	}
-	fmt.Println("INFO", "Add category success", "id", id)
-
-	category, err := getCategoryByID(id)
-	if err != nil {
-		fmt.Println("ERROR", "Get product failed", "error", err)
-		return
-	}
-	fmt.Println("INFO", "Get category success", "category", category)
+	testManyToMany()
 }

@@ -18,7 +18,7 @@ func getCategory(id int) (*Category, error) {
 	return result, nil
 }
 
-func getCategoryWithProductsV1(id int) (*Category, error) {
+func selectCategoryWithHisChildren(id int) (*Category, error) {
 	result := &Category{}
 
 	// load to children
@@ -29,7 +29,7 @@ func getCategoryWithProductsV1(id int) (*Category, error) {
 	return result, nil
 }
 
-func getCategoryWithProducts(id int) (*Category, error) {
+func selectCategoryWithProducts(id int) (*Category, error) {
 	result := &Category{}
 
 	// load to children
@@ -40,7 +40,7 @@ func getCategoryWithProducts(id int) (*Category, error) {
 	return result, nil
 }
 
-func getCategoryWithProductsByCond(id int) (*Category, error) {
+func selectCategoryWithProductsByCond(id int) (*Category, error) {
 	result := &Category{}
 
 	// load to children
@@ -51,7 +51,7 @@ func getCategoryWithProductsByCond(id int) (*Category, error) {
 	return result, nil
 }
 
-func getCategoryWithProductsAndItems(id int) (*Category, error) {
+func selectCategoryWithProductsAndItems(id int) (*Category, error) {
 	result := &Category{}
 	err := DBClient.Preload("Products").Preload("Products.Items").Preload(clause.Associations).Where("id = ?", id).First(&result).Error
 	if err != nil {
@@ -60,7 +60,7 @@ func getCategoryWithProductsAndItems(id int) (*Category, error) {
 	return result, nil
 }
 
-func getCategoryWithProductsAndItemsByCond(id int) (*Category, error) {
+func selectCategoryWithProductsAndItemsByCond(id int) (*Category, error) {
 	result := &Category{}
 
 	// Load to grandchildren
@@ -73,7 +73,7 @@ func getCategoryWithProductsAndItemsByCond(id int) (*Category, error) {
 	return result, nil
 }
 
-func addCategoryWithProductsAndItems() (int, error) {
+func makeCategoryWithProductsAndItems() *Category {
 	category := &Category{
 		Name: "Category_4",
 	}
@@ -87,6 +87,11 @@ func addCategoryWithProductsAndItems() (int, error) {
 		Price: 1000,
 		Items: []*Item{&Item{Name: "Item_4_2_1"}, &Item{Name: "Item_4_2_2"}},
 	})
+
+	return category
+}
+
+func insertCategoryWithProductsAndItems(category *Category) (int, error) {
 
 	err := DBClient.Transaction(func(tx *gorm.DB) error {
 		// if err := tx.Create(category).Error; err != nil {
@@ -120,21 +125,34 @@ func updateCategoryWithProductsAndItems(category Category) error {
 }
 
 func testHasMany() {
-	// add category
-	categoryId, err := addCategoryWithProductsAndItems()
+	// make new category
+	newCategory := makeCategoryWithProductsAndItems()
+
+	// insert category
+	categoryId, err := insertCategoryWithProductsAndItems(newCategory)
 	if err != nil {
 		fmt.Println("ERROR:", "add category failed", err)
 		return
 	}
 	fmt.Println("DEBUG:", "add category success", "category_id", categoryId)
 
-	// get category deatails
-	category, err := getCategoryWithProductsAndItems(categoryId)
+	// select category deatails
+	// category, err := selectCategoryWithProductsAndItems(categoryId)
+	category, err := selectCategoryWithProducts(categoryId)
 	if err != nil {
 		fmt.Println("ERROR:", "get category after add failed", err)
 		return
 	}
-	fmt.Println("DEBUG:", "get category after add success", category)
+	fmt.Println("DEBUG:", "get category with products", "category_id", category.ID)
+	DumpCategoryData(category)
+
+	// get category deatails
+	category, err = selectCategoryWithProductsAndItems(categoryId)
+	if err != nil {
+		fmt.Println("ERROR:", "get category after update failed", err)
+		return
+	}
+	fmt.Println("DEBUG:", "get category with products and items", "category_id", category.ID)
 	DumpCategoryData(category)
 
 	// update category
@@ -144,14 +162,4 @@ func testHasMany() {
 		return
 	}
 	fmt.Println("DEBUG:", "update category success", "category_id", categoryId)
-
-	// get category deatails
-	category, err = getCategoryWithProductsAndItems(categoryId)
-	if err != nil {
-		fmt.Println("ERROR:", "get category after update failed", err)
-		return
-	}
-	fmt.Println("DEBUG:", "get category after update success", category)
-
-	DumpCategoryData(category)
 }

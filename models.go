@@ -10,7 +10,7 @@ type Item struct {
 	Name       string         `json:"name" gorm:"column:name"`
 	Descripton string         `json:"descripton" gorm:"column:descripton"`
 	DeletedAt  gorm.DeletedAt `json:"deleteDate" example:"31/12/9999 23:59" swaggertype:"string" gorm:"index;column:deleted_at"`
-	Product    *Product       `json:"category" gorm:"foreignKey:id;references:product_id"`
+	Product    *Product       `json:"category" gorm:"references:product_id;foreignKey:id"`
 }
 
 func (*Item) TableName() string {
@@ -21,7 +21,7 @@ type Category struct {
 	ID        int            `json:"id" gorm:"column:id;primaryKey;"`
 	Name      string         `json:"name" gorm:"column:name"`
 	DeletedAt gorm.DeletedAt `json:"deleteDate" example:"31/12/9999 23:59" swaggertype:"string" gorm:"index;column:deleted_at"`
-	Products  []*Product     `json:"products" gorm:"foreignKey:category_id;references:id;"`
+	Products  []*Product     `json:"products" gorm:"references:id;foreignKey:category_id;"`
 }
 
 func (*Category) TableName() string {
@@ -37,13 +37,13 @@ type Product struct {
 	// Product_Factory_V2 => không đúng, hoặc là snake_case(product_factory_v2) hoặc là camelCase(ProductFactoryV2), không dùng phan trộn như vâyj
 	// Factories []*Factory `gorm:"many2many:ProductFactory;"`
 
-	Category *Category `json:"category" gorm:"foreignKey:id;references:category_id"` // colume name id, not í field name
+	Category *Category `json:"category" gorm:"references:category_id;foreignKey:id;"` // colume name id, not í field name
 
 	// DeletedAt  gorm.DeletedAt `json:"deleteDate" example:"31/12/9999 23:59" swaggertype:"string" gorm:"index;column:deleted_at"`
-	Items []*Item `json:"items" gorm:"foreignKey:product_id;references:id"`
+	Items []*Item `json:"items" gorm:"references:id;foreignKey:product_id"`
 
 	// gorm:"many2many:<Join Table>;foreignKey:<primaryKey of Product>;joinForeignKey:<Product prefeKey of Product_Factory>;References:<primaryKey of Factory>;joinReferences:<Factory prefeKey of Product_Factory>
-	Factories []*Factory `gorm:"many2many:product_factories;foreignKey:ID;joinForeignKey:ProductID;References:ID;joinReferences:FactoryID"`
+	Factories []*Factory `gorm:"many2many:product_factories;foreignKey:id;joinForeignKey:product_id;References:id;joinReferences:factory_id"`
 }
 
 func (*Product) TableName() string {
@@ -55,8 +55,7 @@ type Factory struct {
 	Name      string      `json:"name" gorm:"column:name"`
 	Address   string      `json:"address" gorm:"column:address"`
 	Workshops []*Workshop `json:"workshop" gorm:"foreignKey:FactoryID"`
-	Products  []*Product  `gorm:"many2many:product_factories;foreignKey:ID;joinForeignKey:FactoryID;References:ID;joinReferences:ProductID"`
-	// Products []Product `gorm:"many2many:ProductFactory;"`
+	Products  []*Product  `gorm:"many2many:product_factories;foreignKey:id;joinForeignKey:factory_id;References:id;joinReferences:product_id"`
 }
 
 func (*Factory) TableName() string {
@@ -64,9 +63,10 @@ func (*Factory) TableName() string {
 }
 
 type Workshop struct {
-	ID        int    `json:"id" gorm:"column:id;primaryKey;"`
-	FactoryID string `json:"factory_id" gorm:"column:factory_id"`
-	Name      string `json:"name" gorm:"column:name"`
+	ID        int      `json:"id" gorm:"column:id;primaryKey;"`
+	FactoryID string   `json:"factory_id" gorm:"column:factory_id"`
+	Name      string   `json:"name" gorm:"column:name"`
+	Factory   *Factory `json:"factory" gorm:"references:factory_id;foreignKey:id"`
 }
 
 func (*Workshop) TableName() string {
