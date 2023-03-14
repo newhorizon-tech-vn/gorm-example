@@ -81,5 +81,6 @@ type ProductFactory struct {
 }
 
 func (*ProductFactory) TableName() string {
+	// return "product_factories"
 	return "ProductFactory"
 }
