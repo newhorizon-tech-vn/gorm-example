@@ -43,7 +43,7 @@ type Product struct {
 	Items []*Item `json:"items" gorm:"references:id;foreignKey:product_id"`
 
 	// gorm:"many2many:<Join Table>;foreignKey:<primaryKey of Product>;joinForeignKey:<Product prefeKey of Product_Factory>;References:<primaryKey of Factory>;joinReferences:<Factory prefeKey of Product_Factory>
-	Factories []*Factory `gorm:"many2many:product_factories;foreignKey:id;joinForeignKey:product_id;References:id;joinReferences:factory_id"`
+	Factories []*Factory `gorm:"many2many:ProductFactory;foreignKey:id;joinForeignKey:product_id;References:id;joinReferences:factory_id"`
 }
 
 func (*Product) TableName() string {
@@ -55,7 +55,7 @@ type Factory struct {
 	Name      string      `json:"name" gorm:"column:name"`
 	Address   string      `json:"address" gorm:"column:address"`
 	Workshops []*Workshop `json:"workshop" gorm:"foreignKey:FactoryID"`
-	Products  []*Product  `gorm:"many2many:product_factories;foreignKey:id;joinForeignKey:factory_id;References:id;joinReferences:product_id"`
+	Products  []*Product  `gorm:"many2many:ProductFactory;foreignKey:id;joinForeignKey:factory_id;References:id;joinReferences:product_id"`
 }
 
 func (*Factory) TableName() string {
@@ -81,5 +81,5 @@ type ProductFactory struct {
 }
 
 func (*ProductFactory) TableName() string {
-	return "product_factories"
+	return "ProductFactory"
 }

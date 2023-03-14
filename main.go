@@ -5,6 +5,7 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	// "gorm.io/gorm/logger"
 )
 
@@ -17,7 +18,7 @@ func initDBClient() (*gorm.DB, error) {
 		username, password, addr, dbname)
 
 	client, err := gorm.Open(mysql.Open(connStr), &gorm.Config{
-		// Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
 		return nil, err
@@ -37,7 +38,9 @@ func main() {
 		return
 	}
 
-	testHasMany()
+	// testHasMany()
 
 	// testManyToMany()
+
+	testSetupJoinTable()
 }
