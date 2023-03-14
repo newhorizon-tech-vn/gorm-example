@@ -25,6 +25,13 @@ func initDBClient() (*gorm.DB, error) {
 	}
 
 	client = client.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8mb4 auto_increment=1")
+
+	// set data models many to many relationship
+	err = client.SetupJoinTable(&Product{}, "Factories", &ProductFactory{})
+	if err != nil {
+		return nil, err
+	}
+
 	return client, nil
 }
 

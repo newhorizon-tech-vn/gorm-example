@@ -38,3 +38,29 @@ func DumpCategoryData(c *Category) {
 
 	fmt.Printf("\n\n\n")
 }
+
+func DumpProductData(p *Product) {
+	fmt.Printf("\n\n\n")
+
+	fmt.Println("--Product", "id", p.ID, "name", p.Name)
+	for _, item := range p.Items {
+		fmt.Println(" |")
+		fmt.Println(" +--Item", "id", item.ID, "name", item.Name)
+	}
+
+	for i, factory := range p.Factories {
+		fmt.Println(" |")
+		fmt.Println(" +--Factory", "id", factory.ID, "name", factory.Name)
+		for _, workshop := range factory.Workshops {
+			if i < (len(p.Factories) - 1) {
+				fmt.Println(" |  |")
+				fmt.Println(" |  +--Workshop", "id", workshop.ID, "name", workshop.Name)
+			} else {
+				fmt.Println(" |  |")
+				fmt.Println(" |  +--Workshop", "id", workshop.ID, "name", workshop.Name)
+			}
+		}
+	}
+
+	fmt.Printf("\n\n\n")
+}
